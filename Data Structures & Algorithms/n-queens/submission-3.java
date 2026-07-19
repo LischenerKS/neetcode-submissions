@@ -1,0 +1,79 @@
+class Solution {
+    public List<List<String>> solveNQueens(int n) {
+        Set<List<String>> ans = new HashSet<>();
+        List<String> cur = new ArrayList<>();
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            sb.append('.');
+        }
+
+        for (int i = 0; i < n; i++) {
+            cur.add(sb.toString());
+        }
+        
+        backtrack(ans, cur, new boolean[n], new boolean[n], new boolean[2*n-1], new boolean[2*n-1], n, 0);
+
+
+        return new ArrayList<>(ans);
+        
+        // ищем первую не занятую
+        // если не нашли, то
+        //     если все верзи расставлены, то сохраняем решение и ret
+        //     если не расставлены, ret
+
+        // если нашли, то
+        //     ставим ферзя
+        //     отмечаем занятыми вертикаль, горизонталь и обе диагонали
+        //     вызываем бэк трэк
+        //     удаляем ферзя
+            
+    }
+
+    private void backtrack(
+        Set<List<String>> ans, List<String> cur, boolean[] isRowBuzy, boolean[] isColumnBuzy, 
+        boolean[] isLeftDiagBuzy, boolean[] isRightDiagBuzy, int n, int cnt
+    ) {
+        if (cnt == n) {
+            ans.add(new ArrayList<>(cur));
+            return;
+        }
+
+        for (int i = 0; i < ((cnt == 0) ? 1 : n); i++) {
+            if (isRowBuzy[i]) {
+                continue;
+            }
+
+            for (int j = 0; j < n; j++) {
+                if (isColumnBuzy[j]) {
+                    continue;
+                }
+
+                if (!isLeftDiagBuzy[i + j] && !isRightDiagBuzy[n - j + i - 1]) {
+                    String row = cur.get(i);
+
+                    row = row.substring(0, j) + "Q" + row.substring(j+1, row.length());
+                    cur.set(i, row);
+
+                    isRowBuzy[i] = true;
+                    isColumnBuzy[j] = true;
+                    isLeftDiagBuzy[i + j] = true;
+                    isRightDiagBuzy[n - j + i - 1] = true;
+
+                    backtrack(ans, cur, isRowBuzy, isColumnBuzy, isLeftDiagBuzy, isRightDiagBuzy, n, cnt + 1);
+
+                    row = row.substring(0, j) + "." + row.substring(j+1, row.length());
+                    cur.set(i, row);
+
+                    isRowBuzy[i] = false;
+                    isColumnBuzy[j] = false;
+                    isLeftDiagBuzy[i + j] = false;
+                    isRightDiagBuzy[n - j + i - 1] = false;
+                }
+            }
+        }
+
+
+
+    }
+}
